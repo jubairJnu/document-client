@@ -52,7 +52,8 @@ export function AuthForm({ mode, onToggleMode }: AuthFormProps) {
       }
       reset();
     } catch (error) {
-      // Error is handled by the mutation
+      console.log(error);
+      
     }
   };
 

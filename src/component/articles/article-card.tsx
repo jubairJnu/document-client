@@ -150,7 +150,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
         {(article.summary || showSummary) && (
           <>
-            <button className="w-full">
+            <button
+              onClick={() => setShowSummary((prev) => !prev)}
+              className="w-full flex items-center justify-center"
+            >
               <Bot className="h-4 w-4 mr-2" />
               {showSummary ? "Hide Summary" : "Show AI Summary"}
               {showSummary ? (
@@ -160,38 +163,43 @@ export function ArticleCard({ article }: ArticleCardProps) {
               )}
             </button>
 
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-center space-x-2 mb-2">
-                <Bot className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">
-                  AI Summary
-                </span>
+            {showSummary && article?.summary && (
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Bot className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">
+                    AI Summary
+                  </span>
+                </div>
+                <p className="text-sm text-blue-700 leading-relaxed">
+                  {article.summary}
+                </p>
               </div>
-              <p className="text-sm text-blue-700 leading-relaxed">
-                {article.summary}
-              </p>
-            </div>
+            )}
           </>
         )}
       </CardContent>
 
       <CardFooter>
-        <button
-          onClick={handleSummarize}
-          disabled={summarizeArticle.isPending}
-          className="w-full"
-        >
-          {summarizeArticle.isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Generating Summary...
-            </>
-          ) : (
-            <>
-              {article.summary ? "Regenerate Summary" : "Generate AI Summary"}
-            </>
-          )}
-        </button>
+        {!article?.summary && (
+          <button
+            onClick={handleSummarize}
+            disabled={summarizeArticle.isPending}
+            className="w-full max-w-sm mx-auto cursor-pointer bg-black text-white rounded-md h-8 flex items-center justify-center transition-colors duration-200 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {summarizeArticle.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Generating Summary...
+              </>
+            ) : (
+              <>
+                <Bot className="h-4 w-4 mr-2" />
+                Generate AI Summary
+              </>
+            )}
+          </button>
+        )}
       </CardFooter>
     </Card>
   );

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { useState } from "react";
 import { CreateArticleRequest } from "@/app/types";

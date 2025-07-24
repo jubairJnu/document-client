@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +10,14 @@ export const useArticles = (filters?: SearchFilters) => {
     queryKey: ["articles", filters],
     queryFn: () => articlesApi.getuserArticles(filters as Record<string, any>),
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+export const useSingleArticles = (id: string) => {
+  return useQuery({
+    queryKey: ["single-article", id], // unique per article ID
+    queryFn: () => articlesApi.getuserSingleArticles(id), // must return a Promise
+    staleTime: 5 * 60 * 1000,
+    enabled: !!id,
   });
 };
 
@@ -41,6 +50,7 @@ export const useSummarizeArticle = () => {
   return useMutation({
     mutationFn: (id: string) => articlesApi.summerizeArticles(id),
     onSuccess: (summary, id) => {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       queryClient.setQueryData(["articles", id], (old: any) =>
         old ? { ...old, summary } : old
       );
