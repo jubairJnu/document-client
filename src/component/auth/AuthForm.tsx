@@ -193,8 +193,8 @@ export function AuthForm({ mode, onToggleMode }: AuthFormProps) {
               <p className="text-sm text-blue-800 font-medium">
                 Demo Credentials:
               </p>
-              <p className="text-sm text-blue-600">Email: demo@example.com</p>
-              <p className="text-sm text-blue-600">Password: password</p>
+              <p className="text-sm text-blue-600">Email: demo11@gmail.com</p>
+              <p className="text-sm text-blue-600">Password: demoPass</p>
             </div>
           )}
         </CardContent>
