@@ -1,7 +1,8 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { LoginRequest, SignupRequest } from "../types";
 import { authApi } from "@/lib/api";
@@ -9,21 +10,24 @@ import { authApi } from "@/lib/api";
 export const useAuth = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  //   const { data: user, isLoading } = useQuery({
-  //     queryKey: ["auth", "user"],
-  //     queryFn: () => authApi.getCurrentUser(),
-  //     staleTime: Infinity,
-  //   });
-  const token = localStorage.getItem("auth-token");
-
-  console.log(token, "token");
+  useEffect(() => {
+    // Only runs on the client
+    const token = localStorage.getItem("auth-token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => authApi.login(data),
     onSuccess: (data) => {
       queryClient.setQueryData(["auth", "user"], data.user);
-      localStorage.setItem("auth-token", data.accessToken);
+      if (data.data.accessToken) {
+        localStorage.setItem("auth-token", data.data.accessToken);
+      }
+      setIsAuthenticated(true);
       router.push("/dashboard");
     },
   });
@@ -32,6 +36,8 @@ export const useAuth = () => {
     mutationFn: (data: SignupRequest) => authApi.signup(data),
     onSuccess: (data) => {
       queryClient.setQueryData(["auth", "user"], data.user);
+      localStorage.setItem("auth-token", data.accessToken);
+      setIsAuthenticated(true);
       router.push("/dashboard");
     },
   });
@@ -39,7 +45,7 @@ export const useAuth = () => {
   return {
     login: loginMutation.mutateAsync,
     signup: signupMutation.mutateAsync,
-    isAuthenticated: !!token,
+    isAuthenticated,
     isLoggingIn: loginMutation.isPending,
     isSigningUp: signupMutation.isPending,
     loginError: loginMutation.error,
