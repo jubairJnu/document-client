@@ -23,12 +23,15 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => authApi.login(data),
     onSuccess: (data) => {
-      queryClient.setQueryData(["auth", "user"], data.user);
-      if (data.data.accessToken) {
+      if (data?.data?.accessToken) {
         localStorage.setItem("auth-token", data.data.accessToken);
+        queryClient.setQueryData(["auth", "user"], data.user);
+        setIsAuthenticated(true);
+        router.push("/dashboard");
+      } else {
+        // Optional: handle unexpected login response
+        console.warn("Login succeeded but accessToken is missing");
       }
-      setIsAuthenticated(true);
-      router.push("/dashboard");
     },
   });
 
@@ -36,9 +39,6 @@ export const useAuth = () => {
     mutationFn: (data: SignupRequest) => authApi.signup(data),
     onSuccess: (data) => {
       queryClient.setQueryData(["auth", "user"], data.user);
-      localStorage.setItem("auth-token", data.accessToken);
-      setIsAuthenticated(true);
-      router.push("/dashboard");
     },
   });
 
